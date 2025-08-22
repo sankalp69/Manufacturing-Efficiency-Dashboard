@@ -68,3 +68,54 @@ let
     #"Added Efficiency Column" = Table.AddColumn(#"Changed Type", "CostPerUnit", each [ProductionCost]/[QuantityProduced])
 in
     #"Added Efficiency Column"
+
+// Clean Employee Performance Data
+let
+    Source = Excel.Workbook(File.Contents("Employee_Data.xlsx"), null, true),
+    Employee_Data = Source{[Item="Employee",Kind="Sheet"]}[Data],
+    #"Promoted Headers" = Table.PromoteHeaders(Employee_Data, [PromoteAllScalars=true]),
+    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{
+        {"EmployeeID", Int64.Type}, 
+        {"Department", type text}, 
+        {"HireDate", type date}, 
+        {"Salary", Currency.Type}, 
+        {"CountryOfOperation", type text}, 
+        {"ProductID", Int64.Type}, 
+        {"PerformanceRating", Int64.Type}, 
+        {"TrainingRecords", Int64.Type}
+    })
+in
+    #"Changed Type"
+// Key Performance Indicators
+Total Production Cost = SUM('Production'[ProductionCost])
+
+Total Quantity Produced = SUM('Production'[QuantityProduced])
+
+Average Cost Per Unit = DIVIDE([Total Production Cost], [Total Quantity Produced])
+
+Average Performance Rating = AVERAGE('Employee'[PerformanceRating])
+
+Total Training Hours = SUM('Employee'[TrainingRecords])
+
+Employee Count = DISTINCTCOUNT('Employee'[EmployeeID])
+
+Salary vs Performance Ratio = DIVIDE([Average Performance Rating], AVERAGE('Employee'[Salary])) * 1000
+
+Efficiency Score = 
+DIVIDE(
+    [Total Quantity Produced], 
+    [Total Production Cost]
+) * 1000
+
+// Time-based Calculations
+MTD Production = 
+TOTALMTD('Production'[QuantityProduced], 'Production'[ProductionDate])
+
+QTD Production = 
+TOTALQTD('Production'[QuantityProduced], 'Production'[ProductionDate])
+
+YoY Production Growth = 
+DIVIDE(
+    CALCULATE(SUM('Production'[QuantityProduced]), SAMEPERIODLASTYEAR('Production'[ProductionDate])),
+    SUM('Production'[QuantityProduced])
+) - 1
