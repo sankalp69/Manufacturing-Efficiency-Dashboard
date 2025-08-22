@@ -1,7 +1,8 @@
 # 📊 Manufacturing Efficiency Dashboard
 **Enhancing Manufacturing Performance Through Data-Driven Insights**
+<img width="1468" height="798" alt="image" src="https://github.com/user-attachments/assets/f14190b5-4555-4387-9ccc-f76992314234" />
 
-![Dashboard Screenshot](./assets/dashboard-screenshot.png)
+
 > Replace the image path above with your actual screenshot (e.g., from your repo’s `assets/` folder).
 
 ---
